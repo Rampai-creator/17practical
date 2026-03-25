@@ -131,4 +131,66 @@ public class tryBST {
             }
             return node;
         }
+       
+        //isBST: checks whether the tree satisfies BST properties.
+        //Every node must have:
+        //   all left descendants strictly less than node.key
+        //   all right descendants strictly greater than node.key
+        //We pass min/max bounds down the tree to enforce this globally.
+        
+        boolean isBST() {
+            return isBSTRec(root, Integer.MIN_VALUE, Integer.MAX_VALUE);
+        }
+
+        //Recursive helper: checks BST property with valid range [min, max]
+        private boolean isBSTRec(tNode node, int min, int max) {
+            if (node == null) return true; //empty tree/subtree is valid
+
+            //Current node's key must be strictly within (min, max)
+            if (node.key <= min || node.key >= max) return false;
+
+            //Left subtree: all keys must be < node.key (max = node.key)
+            //Right subtree: all keys must be > node.key (min = node.key)
+            return isBSTRec(node.left, min, node.key)
+                && isBSTRec(node.right, node.key, max);
+        }
+
+       
+        //countNodes: counts how many nodes are in the tree.
+        //Useful for verifying the tree size after deletion.
+        
+        int countNodes() {
+            return countRec(root);
+        }
+
+        private int countRec(tNode node) {
+            if (node == null) return 0;
+            return 1 + countRec(node.left) + countRec(node.right);
+        }
+
+        
+        //clear: empties the entire tree (sets root to null).
+        //Used between timing repetitions to start fresh each time.
+      
+        void clear() {
+            root = null;
+        }
+
+        
+        //printInOrder: prints all keys in sorted order (left-root-right).
+        //Used for small trees (n <= 4) to visually verify correctness.
+        
+        void printInOrder() {
+            printInOrderRec(root);
+            System.out.println();
+        }
+
+        private void printInOrderRec(tNode node) {
+            if (node == null) return;
+            printInOrderRec(node.left);
+            System.out.print(node.key + " ");
+            printInOrderRec(node.right);
+        }
+    }
+
 
