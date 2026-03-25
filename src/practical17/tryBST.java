@@ -96,10 +96,39 @@ public class tryBST {
             return node;
         }
 
-        // findMin: returns the node with the smallest key in a subtree.
-        // Used by delete to find the in-order successor.
+        //findMin: returns the node with the smallest key in a subtree.
+        //Used by delete to find the in order successor.
         private tNode findMin(tNode node) {
-            // Keep going left until there is no left child
+            //Keep going left until there is no left child
             while (node.left != null) node = node.left;
             return node;
         }
+
+      
+      
+        //deleteAllEvens: removes every node whose key is even.
+        //We use a postorder traversal so children are handled before
+        //their parents this avoids missing nodes during deletion.
+       
+        void deleteAllEvens() {
+            root = deleteEvensRec(root);
+        }
+
+        //Recursive helper: visits left subtree, right subtree, then
+        //checks the current node. Returns the cleaned subtree root.
+        private tNode deleteEvensRec(tNode node) {
+            if (node == null) return null;
+
+            //First clean the children
+            node.left = deleteEvensRec(node.left);
+            node.right = deleteEvensRec(node.right);
+
+            //Then check this node
+            if (node.key % 2 == 0) {
+                //This node is even delete it using the same BST delete logic
+                //(reuse deleteRec so we handle all three cases correctly)
+                return deleteRec(node, node.key);
+            }
+            return node;
+        }
+
