@@ -219,9 +219,9 @@ public class tryBST {
     public static void main(String[] args) {
 
         //SMALL TEST: n = 4 (tree has 2^4 - 1 = 15 nodes)
-        
+        System.out.println();
         System.out.println(" SMALL TEST n = 4 (15 nodes)");
-        
+        System.out.println();
 
         BST small = new BST();
         populateTree(small, 1, 15);
@@ -242,7 +242,7 @@ public class tryBST {
         System.out.println();
         
         System.out.println(" MEDIUM TEST n = 7 (127 nodes)");
-     
+        System.out.println();
 
         BST medium = new BST();
         populateTree(medium, 1, 127);
@@ -287,6 +287,48 @@ public class tryBST {
             tree.deleteAllEvens();
             deleteTimes[r] = (System.nanoTime() - start) / 1_000_000.0; //ms
         }
+      //Calculate averages and standard deviations
+
+        //Populate stats
+        double sumP = 0;
+        for (double t : populateTimes) sumP += t;
+        double avgP = sumP / REPS;
+
+        double varP = 0;
+        for (double t : populateTimes) varP += (t - avgP) * (t - avgP);
+        double stdP = Math.sqrt(varP / REPS);
+
+        //Delete stats
+        double sumD = 0;
+        for (double t : deleteTimes) sumD += t;
+        double avgD = sumD / REPS;
+
+        double varD = 0;
+        for (double t : deleteTimes) varD += (t - avgD) * (t - avgD);
+        double stdD = Math.sqrt(varD / REPS);
+
+        //Display results in table format
+        System.out.println("Number of keys n = " + n
+                         + " → total nodes = " + total);
+        System.out.println();
+        System.out.printf("%-30s %10s %15s%n",
+                          "Method", "Avg (ms)", "Std Dev (ms)");
+        System.out.println("-".repeat(60));
+        System.out.printf("%-30s %10.3f %15.3f%n",
+                          "Populate tree", avgP, stdP);
+        System.out.printf("%-30s %10.3f %15.3f%n",
+                          "Remove evens from tree", avgD, stdD);
+        System.out.println("-".repeat(60));
+
+        //Final BST validity check after all repetitions
+        System.out.println();
+        System.out.println("Final tree is BST? " + tree.isBST());
+        System.out.println("Final node count: " + tree.countNodes());
+        //After deleting evens from [1..2^20-1], only odd numbers remain.
+        //There are 2^19 = 524,288 odd numbers in that range.
+        System.out.println("Expected odd nodes: " + (total / 2 + 1));
+    }
+}
 
   
   
