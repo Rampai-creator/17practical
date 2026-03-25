@@ -192,5 +192,103 @@ public class tryBST {
             printInOrderRec(node.right);
         }
     }
+   
+    //populateTree: inserts integers [1 .. 2^n - 1] into the BST
+    //in BREADTH-FIRST order so the result is a perfectly balanced BST
+    //Strategy:
+    //   Find the middle of the current range → insert it.
+    //   Recurse on the left half [low .. middle-1]
+    //   Recurse on the right half [middle+1 .. high]
+    
+    //balanced BST when the total count is exactly 2^n - 1.
+
+    static void populateTree(BST tree, int low, int high) {
+        if (low > high) return; //base case: empty range
+
+        int middle = (low + high) / 2; //midpoint becomes the root of this subtree
+        tree.insert(middle); //insert it first (breadth first order)
+
+        //Recurse on left and right halves
+        populateTree(tree, low, middle - 1);
+        populateTree(tree, middle + 1, high);
+    }
+
+    
+    // Main: small correctness test, then large timing runs.
+  
+    public static void main(String[] args) {
+
+        //SMALL TEST: n = 4 (tree has 2^4 - 1 = 15 nodes)
+        
+        System.out.println(" SMALL TEST n = 4 (15 nodes)");
+        
+
+        BST small = new BST();
+        populateTree(small, 1, 15);
+
+        System.out.println("Is BST? " + small.isBST());
+        System.out.println("Node count: " + small.countNodes());
+        System.out.print("In-order: ");
+        small.printInOrder(); //should print 1 2 3 ... 15
+
+        small.deleteAllEvens();
+        System.out.println("After deleting evens:");
+        System.out.println("Is BST? " + small.isBST());
+        System.out.println("Node count: " + small.countNodes()); // should be 8
+        System.out.print("In-order: ");
+        small.printInOrder(); //should print only odd numbers: 1 3 5 7 9 11 13 15
+
+        //MEDIUM TEST: n = 7 (tree has 2^7 - 1 = 127 nodes)
+        System.out.println();
+        
+        System.out.println(" MEDIUM TEST n = 7 (127 nodes)");
+     
+
+        BST medium = new BST();
+        populateTree(medium, 1, 127);
+        System.out.println("Is BST? " + medium.isBST());
+        System.out.println("Node count: " + medium.countNodes());
+        medium.deleteAllEvens();
+        System.out.println("After deleting evens:");
+        System.out.println("Is BST? " + medium.isBST());
+        System.out.println("Node count: " + medium.countNodes());
+
+        //LARGE TIMING TEST: n = 20 (2^20 - 1 = 1,048,575 nodes)
+        //The practical sheet says timings must exceed 1000ms.
+        // n=20 gives over 1 million nodes which achieves this.
+        System.out.println();
+        System.out.println(" LARGE TIMING TEST n = 20");
+        System.out.println(" (2^20 - 1 = 1,048,575 nodes)");
+      
+
+        int n = 20;
+        int total = (1 << n) - 1; //2^n - 1 using bit shift 
+        int REPS = 30; //30 repetitions
+
+        //Arrays to store each run's timing (in milliseconds)
+        double[] populateTimes = new double[REPS];
+        double[] deleteTimes = new double[REPS];
+
+        BST tree = new BST();
+
+        System.out.println("Running " + REPS + " repetitions — please wait...");
+        System.out.println();
+
+        for (int r = 0; r < REPS; r++) {
+            tree.clear(); //start with an empty tree each repetition
+
+            //Time the populate step
+            long start = System.nanoTime();
+            populateTree(tree, 1, total);
+            populateTimes[r] = (System.nanoTime() - start) / 1_000_000.0; //ms
+
+            //Time the delete-evens step
+            start = System.nanoTime();
+            tree.deleteAllEvens();
+            deleteTimes[r] = (System.nanoTime() - start) / 1_000_000.0; //ms
+        }
+
+  
+  
 
 
